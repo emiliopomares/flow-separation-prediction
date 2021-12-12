@@ -13,6 +13,8 @@ def print_usage():
 	print("  <thick>: Thickness (1 to 30)")
 	print("<npoints>: number of points (defaults to 101)")
 	print("") 
+	print("example: python3 generate_naca5.py 0.3 25 0 10 101")
+	print("") 
 
 closed_trailing_edge = True
 
@@ -118,15 +120,16 @@ generators = {
 	}
 }
 
-def generate_airfoil_points(dcl, mcp_index, ref, thick, npoints=101, write_to_file=True):
+def generate_naca5_airfoil_points(dcl, mcp_index, ref, thick, npoints=101, write_to_file=True):
 	s_u			= []
 	s_l 		= []
 	r 			= generators[ref]['r'][mcp_index]
 	k1 			= generators[ref]['k1'][mcp_index]
 	k2_over_k1 	= generators[ref]['k2_over_k1'][mcp_index]
-	dbeta = math.pi / float(npoints)
-	beta = 0.0
-	for i in range(npoints):
+	dbeta = math.pi / float(npoints//2)
+	# First we sweep from pi to 0 (into the negative x direction)
+	beta = math.pi
+	for i in range(npoints//2):
 		x_c = (1.0 - math.cos(beta)) / 2.0
 		if x_c<r:
 			y_c = (dcl/0.3) * generators[ref]['y_front'](x_c, r, k1, k2_over_k1)
@@ -137,12 +140,26 @@ def generate_airfoil_points(dcl, mcp_index, ref, thick, npoints=101, write_to_fi
 		t = (thick/0.2)*(a_0*x_c**0.5 + a_1*x_c + a_2*x_c**2 + a_3*x_c**3 + a_4*x_c**4)
 		theta = math.atan(y_x)
 		x_upper = x_c - t * math.sin(theta)
-		x_lower = x_c + t * math.sin(theta)
 		y_upper = y_c + t * math.cos(theta)
-		y_lower = y_c - t * math.cos(theta)
 		s_u.append([x_upper, y_upper])
+		beta -= dbeta
+	# Then we follow continuity by sweeping from 0 to pi (into the positive x direction)
+	beta = 0
+	for i in range(npoints//2):
+		x_c = (1.0 - math.cos(beta)) / 2.0
+		if x_c<r:
+			y_c = (dcl/0.3) * generators[ref]['y_front'](x_c, r, k1, k2_over_k1)
+			y_x = (dcl/0.3) * generators[ref]['grad_front'](x_c, r, k1, k2_over_k1)
+		else:
+			y_c = (dcl/0.3) * generators[ref]['y_back'](x_c, r, k1, k2_over_k1)
+			y_x = (dcl/0.3) * generators[ref]['grad_back'](x_c, r, k1, k2_over_k1)
+		t = (thick/0.2)*(a_0*x_c**0.5 + a_1*x_c + a_2*x_c**2 + a_3*x_c**3 + a_4*x_c**4)
+		theta = math.atan(y_x)
+		x_lower = x_c + t * math.sin(theta)
+		y_lower = y_c - t * math.cos(theta)
 		s_l.append([x_lower, y_lower]) 
 		beta += dbeta
+	s_l.append([1, 0])
 	if write_to_file:
 		with open('surface.csv', 'w', newline='') as csvfile:
 			writer = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
@@ -150,49 +167,51 @@ def generate_airfoil_points(dcl, mcp_index, ref, thick, npoints=101, write_to_fi
 				writer.writerow(row)
 			for row in s_l:
 				writer.writerow(row)
+	return s_u + s_l
 
 
-if len(sys.argv) < 5:
-	print_usage()
-	quit()
-
-if len(sys.argv) < 6:
-	npoints = 101
-else:
-	npoints = int(sys.argv[5])
-
-def validate_dcl(dcl):
-	if dcl < 0.05 or dcl > 1:
+if __name__ == "__main__":
+	if len(sys.argv) < 5:
 		print_usage()
 		quit()
 
-def validate_ref(ref):
-	if(ref != 0 and ref != 1):
-		print_usage()
-		quit()
+	if len(sys.argv) < 6:
+		npoints = 101
+	else:
+		npoints = int(sys.argv[5])
 
-def validate_mcp(ref, mcp):
-	if(mcp != 5 and mcp != 10 and mcp != 15 and mcp != 20 and mcp != 25):
-		print_usage()
-		quit()
-	if(mcp == 5 and ref == 0):
-		print_usage()
-		quit()
+	def validate_dcl(dcl):
+		if dcl < 0.05 or dcl > 1:
+			print_usage()
+			quit()
 
-def validate_thick(thick):
-	if(thick < 0.01 or thick > 0.3):
-		print_usage()
-		quit()
+	def validate_ref(ref):
+		if(ref != 0 and ref != 1):
+			print_usage()
+			quit()
 
-dcl 	= float(sys.argv[1])
-validate_dcl(dcl)
-ref		= int(sys.argv[3])
-validate_ref(ref)
-mcp 	= int(sys.argv[2])
-validate_mcp(ref, mcp)
-thick 	= float(sys.argv[4]) / 100
-validate_thick(thick)
+	def validate_mcp(ref, mcp):
+		if(mcp != 5 and mcp != 10 and mcp != 15 and mcp != 20 and mcp != 25):
+			print_usage()
+			quit()
+		if(mcp == 5 and ref == 0):
+			print_usage()
+			quit()
 
-generate_airfoil_points(dcl, (mcp-5)//5, ref, thick, npoints)
+	def validate_thick(thick):
+		if(thick < 0.01 or thick > 0.3):
+			print_usage()
+			quit()
+
+	dcl 	= float(sys.argv[1])
+	validate_dcl(dcl)
+	ref		= int(sys.argv[3])
+	validate_ref(ref)
+	mcp 	= int(sys.argv[2])
+	validate_mcp(ref, mcp)
+	thick 	= float(sys.argv[4]) / 100
+	validate_thick(thick)
+
+	generate_naca5_airfoil_points(dcl, (mcp-5)//5, ref, thick, npoints)
 
 
