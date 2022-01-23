@@ -1,4 +1,4 @@
-# Base off Thien Phans's work
+# Based off Thien Phans's work
 import math
 
 hyperparameters = {
@@ -221,7 +221,7 @@ def generate_blockMesh_full(pointList, aoa, inlet_x_dist, \
     result += " )\n"
     result += "\n"
     result += " arc 3 12 ( %g %g 0 ) \n" % (-inlet_x_dist*math.sin(math.pi/4)+1, -inlet_x_dist*math.sin(math.pi/4))
-    result += " arc 3 12 ( %g %g %g ) \n" % (-inlet_x_dist*math.sin(math.pi/4)+1, -inlet_x_dist*math.sin(math.pi/4), z_depth)
+    result += " arc 7 13 ( %g %g %g ) \n" % (-inlet_x_dist*math.sin(math.pi/4)+1, -inlet_x_dist*math.sin(math.pi/4), z_depth)
     result += "\n"
     result += " spline 0 16 \n"
     result += " (\n"
@@ -230,6 +230,7 @@ def generate_blockMesh_full(pointList, aoa, inlet_x_dist, \
     result += " )\n"
     result += "\n"
     result += " spline 4 17 \n"
+    result += " (\n"
     for i in range(0, 49):
         result += "     ( %g %g %g ) \n" % (pointList[50+i][0], pointList[50+i][1], z_depth)
     result += " )\n"
@@ -290,7 +291,7 @@ def generate_blockMesh_full(pointList, aoa, inlet_x_dist, \
     result += "     faces\n"
     result += "     (\n"
     result += "         ( 1 8 10 5 )\n"
-    result += "     )\n"
+    result += "     );\n"
     result += " }\n"
     result += "interface2\n"
     result += " {\n"
@@ -298,7 +299,7 @@ def generate_blockMesh_full(pointList, aoa, inlet_x_dist, \
     result += "     faces\n"
     result += "     (\n"
     result += "         ( 16 17 10 8 )\n"
-    result += "     )\n"
+    result += "     );\n"
     result += " }\n"
     result += ");"
     result += "\n"
