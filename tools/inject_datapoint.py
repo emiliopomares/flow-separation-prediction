@@ -1,7 +1,8 @@
 import generate_datapoint
 import os
+from config import config
 
-blockMeshDictPath = os.getcwd() + "/../openfoam/run/Airfold2D_full/system/blockMeshDict"
+blockMeshDictPath = config['project_path'] + "system/blockMeshDict"
 
 file = generate_datapoint.generate_example_datapoint()
 
