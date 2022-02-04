@@ -1,7 +1,8 @@
 from config import config
 import os
 from mesh import Mesh
-from simulutils import *
+import simulutils
+import flow_utils
 import matplotlib.pyplot as plt
 
 def read_wall_start_face():
@@ -62,39 +63,13 @@ def read_geo():
     result = Mesh(points, faces)
     return result
 
-def wall_face_to_p(wallFace, nFaces):
-    if(wallFace < nFaces//2):
-        return (nFaces/2 - wallFace) / (nFaces)
-    else:
-        return (wallFace / (nFaces))
-
-def detect_separation_points(mesh, wss):
-    (nFaces, wallStartFace) = read_wall_start_face()
-    epsilon = 0.00505
-    wall_start_face = wallStartFace
-    sep_faces = []
-    sep_p = []
-    for i in range(0, len(wss)):
-        n = norm(wss[i])
-        if n < epsilon:
-            sep_faces.append(i)
-            sep_p.append(wall_face_to_p(i, nFaces))
-    print(sep_faces)
-    print(sep_p)
-
-def find_separation_point(mesh):
-    latest_time = find_latest_time_dir()
-    wallStresses = read_vector_field(latest_time, 'wallShearStress')
-    detect_separation_points(mesh, wallStresses)
-
-
 if __name__ == '__main__':
     (nFaces, wallStartFace) = read_wall_start_face()
     print(nFaces)
     print(wallStartFace)
     g = read_geo() # 0 to 40, upper... 41 to 81 lower   0 to 81 = 82 faces
     
-    find_separation_point(g)
+    #find_separation_point(g)
     #i = 0
     #x = list(map(lambda x: x[0], g.points))
     #y = list(map(lambda x: x[1], g.points))
