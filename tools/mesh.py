@@ -1,16 +1,18 @@
 class Mesh:
     points = None
     faces = None
+    wall_face_start_index = None
     perPointAttributes = None
     perFaceAttributes = None
     boundary_faces = None
 
-    def __init__(self, _points, _faces):
+    def __init__(self, _points, _faces, _wall_index, _n_wall_faces):
         self.points = _points
         self.faces = _faces
+        self.wall_face_start_index = _wall_index
         self.perPointAttributes = {}
         self.perFaceAttributes = {}
-        self.boundary_faces = {}
+        self.boundary_faces = _faces[_wall_index:_wall_index+_n_wall_faces]
 
     def get_number_of_points(self):
         return len(self.points)

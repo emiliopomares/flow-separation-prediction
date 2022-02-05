@@ -60,15 +60,21 @@ def read_faces():
 def read_geo():
     points = read_points()
     faces = read_faces()
-    result = Mesh(points, faces)
+    n_wall_faces, start_face_index = read_wall_start_face()
+    result = Mesh(points, faces, start_face_index, n_wall_faces)
     return result
 
 if __name__ == '__main__':
-    (nFaces, wallStartFace) = read_wall_start_face()
-    print(nFaces)
-    print(wallStartFace)
+    #(nFaces, wallStartFace) = read_wall_start_face()
+    #print(nFaces)
+    #print(wallStartFace)
     g = read_geo() # 0 to 40, upper... 41 to 81 lower   0 to 81 = 82 faces
-    
+    #upper_profile_length = flow_utils.calculate_upper_profile_length(g)
+    #print(upper_profile_length)
+    #lower_profile_length = flow_utils.calculate_lower_profile_length(g)
+    #print(lower_profile_length)
+    #print(flow_utils.calculate_partial_profile_length(g, 1))
+   
     #find_separation_point(g)
     #i = 0
     #x = list(map(lambda x: x[0], g.points))
