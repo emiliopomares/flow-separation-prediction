@@ -99,10 +99,6 @@ def generate_naca4_airfoil_points(mc, mcp, thick, npoints=101, angle=0, write_to
 			writer = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
 			for row in allpoints:
 				writer.writerow(row)
-			#for row in s_u:
-			#	writer.writerow(row)
-			#for row in s_l:
-			#	writer.writerow(row)
 	else:
 		return allpoints
 

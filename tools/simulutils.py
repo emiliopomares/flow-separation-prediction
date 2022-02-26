@@ -13,6 +13,11 @@ def find_latest_time_dir():
 def norm(vec):
     return math.sqrt(vec[0]**2 + vec[1]**2 + vec[2]**2)
 
+def sign_of(v):
+    if v>0:
+        return 1
+    return -1
+
 if __name__ == '__main__':
     d = find_latest_time_dir()
     print(d)
