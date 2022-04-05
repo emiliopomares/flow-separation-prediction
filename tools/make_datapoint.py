@@ -13,7 +13,10 @@ import generate_parameters
 
 # This is the script to generate the training dataset
 
-def make_datapoint(newData=True):
+def make_datapoint():
+    make_datapoint_with_params(0, 0, 0, 0, 0, True, True)
+
+def make_datapoint_with_params(aoa, re, _mc, _mcp, _thick, newData=True, generate=True):
 
     # Prepare paths
     blockMeshDictPath = config['project_path'] + "system/blockMeshDict"
@@ -28,9 +31,18 @@ def make_datapoint(newData=True):
         # select parameters
 
         angle = generate_parameters.make_aoa()
+        if(not generate):
+            angle = aoa
         Re = generate_parameters.make_Re()
+        if(not generate):
+            Re = re
         U = generate_parameters.Re_to_U(Re)
         mc, mcp, th = generate_parameters.make_naca4() 
+        if(not generate):
+            mc = _mc
+            mcp = _mcp
+            th = thick
+
         print("Input for this datapoint:  angle " + str(angle) + ", Re/free stream vel " + str(Re)+"/"+str(U) + ", mc " + str(mc) + ", mcp " + str(mcp) + ", th " + str(th))
 
         # Generate a blockmesh
@@ -61,6 +73,12 @@ def make_datapoint(newData=True):
     print(wallStartFace)
     g = read_geo.read_geo()
 
+    print("Boundary start face: " + str(g.get_boundary_start_face()))
+    sf = g.get_boundary_start_face()
+    print("A boundary face: " + str(g.get_face_vertices(sf)))
+    print("Area of the face: " + str(g.get_face_area(sf)))
+    print("Axis at that face: " + str(g.get_face_normals_unit(sf)))
+
     s = flow_utils.find_separation_point(g)
 
     print(s)
@@ -74,4 +92,9 @@ def make_datapoint(newData=True):
     return {'inputs': [ angle, Re, mc, mcp, th ], 'outputs': [output['upper_sep_point'], output['lower_sep_point']]}
 
 if __name__ == '__main__':
-    print(make_datapoint(True))
+    aoa     = float(sys.argv[1])
+    re      = float(sys.argv[2])
+    mc 		= float(sys.argv[3])
+    mcp 	= float(sys.argv[4])
+    thick 	= float(sys.argv[5])
+    print(make_datapoint_with_params(aoa, re, mc, mcp, thick, True, False))

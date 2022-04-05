@@ -24,6 +24,21 @@ def read_wall_start_face():
                 startFace = int(sFaceString)
                 return (nFaces, startFace)
 
+def read_scalar_field(base_dir, field_name):
+    fieldPath = config['project_path'] + base_dir + '/' + field_name
+    with open(fieldPath, 'r') as f:
+        lines = f.readlines()
+        all_points = []
+        state = False
+        for line in lines:
+            if line.startswith('('):
+                if state == False:
+                    state = True
+                else:
+                    value_str = line
+                    all_points.append(float(value_str))
+    return all_points
+
 def read_vector_field(base_dir, field_name):
     fieldPath = config['project_path'] + base_dir + '/' + field_name
     with open(fieldPath, 'r') as f:
