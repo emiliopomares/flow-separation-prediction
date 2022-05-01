@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flow-simulation-deployment
+  labels:
+    app: flow-simulation
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flow-simulation
+  template:
+    metadata:
+      labels:
+        app: flow-simulation
+    spec:
+      containers:
+      - name: flow-simulation
+        image: emiliopomaresporras/flowsep:1
+        env:
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              name: flow-simulation
+              key: db_host
+        - name: DB_PASSWD
+          valueFrom:
+            secretKeyRef:
+              name: flow-simulation
+              key: db_passwd
+        resources:
+          limits:
+            cpu: 900m
+          requests:
+            cpu: 800m
+

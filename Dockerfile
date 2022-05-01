@@ -17,4 +17,4 @@ RUN apt-get update
 RUN apt-get -y install openfoam5
 WORKDIR /app/tools
 RUN echo $(ls -lha)
-CMD ["source", "/opt/openfoam5/etc/bashrc", "&&", "python3", "make_dataset.py"]
+CMD ["./start.sh"]
