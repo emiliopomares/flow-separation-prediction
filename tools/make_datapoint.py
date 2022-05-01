@@ -14,7 +14,7 @@ import generate_parameters
 # This is the script to generate the training dataset
 
 def make_datapoint():
-    return make_datapoint_with_params(0, 0, 0, 0, 0, False, True)
+    return make_datapoint_with_params(0, 0, 0, 0, 0, True, True)
 
 def make_datapoint_with_params(aoa, re, _mc, _mcp, _thick, newData=True, generate=True):
 
