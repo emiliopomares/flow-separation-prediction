@@ -1,17 +1,27 @@
 import simulutils
 from flow_utils import *
+from mesh import *
 import read_geo
 
-def detect_separation_points(mesh, wss):
+def detect_separation_points(mesh, wss): # this is not acceptable
     print("detect separation points")
-    (nFaces, wall_start_face) = read_geo.read_wall_start_face()
+    wall_face_index = mesh.get_boundary_start_face()
+    print("wall face index: " + str(wall_face_index))
+
     epsilon = 0.0505
     sep_faces = []
     sep_p_old = []
     upper_sep_p = []
     lower_sep_p = []
-    for i in range(1, len(wss)):
-        n = simulutils.norm(wss[i]) * (-simulutils.sign_of(wss[i][0]) + 1)/2
+    for i in range(0, len(wss)//2):
+        print("i : " + str(i))
+        print("wall face + i : " + str(wall_face_index+i))
+        face_normals = mesh.get_face_normals_unit(wall_face_index+i)
+        print("wall face normals parallel: " + str(face_normals[0]))
+        print("wall shear stress: " + str(wss[i]))
+        stress_in_parallel_direction = simulutils.dot_product(wss[i], face_normals[0])
+        n = stress_in_parallel_direction #simulutils.norm(wss[i]) * (-simulutils.sign_of(wss[i][0]) + 1)/2
+        print(" Sep point test face  " + str(i) + " -> " + str(n))
         if n < epsilon:
             #sep_faces.append(i)
             #sep_p_old.append(wall_face_to_p_old(i, nFaces))
@@ -24,6 +34,21 @@ def detect_separation_points(mesh, wss):
         'upper_sep_points': upper_sep_p,
         'lower_sep_points': lower_sep_p
     }
+
+def calculate_pressure_lift_drag(mesh, angle_of_attack):
+    latest_time = simulutils.find_latest_time_dir()
+    pressure = read_geo.read_scalar_field(latest_time, 'p')
+    boundary_faces = mesh.get_boundary_faces()
+    for boundary_face in boundary_faces:
+        area = mesh.calculate_face_area(boundary_face)
+        normals = mesh.get_face_normals_unit(boundary_face) # normal direction is normals[1]
+        
+    return [0,0,0]
+
+def calculate_wallShearStress_lift_drag(mesh, angle_of_attack):
+    latest_time = simulutils.find_latest_time_dir()
+    wallStresses = read_geo.read_vector_field(latest_time, 'wallShearStress')
+    return [0,0,0]
 
 def find_separation_point(mesh):
     print("find separation points")

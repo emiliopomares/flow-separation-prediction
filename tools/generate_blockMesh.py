@@ -9,7 +9,7 @@ hyperparameters = {
     'cell_size_in_middle':              0.035,
     'separating_point_position':        0.4,
     'boundary_layer_thickness':         0.1,
-    'first_layer_thickness':            0.00001, # was 0.005
+    'first_layer_thickness':            0.0002, # 0.00001, # was 0.005 working value 0.00002
     'expansion_ratio':                  1.2,
     'max_cell_size_in_inlet':           1,
     'max_cell_size_in_outlet':          1,
@@ -31,8 +31,9 @@ def generate_blockMesh(pointList, aoa, inlet_x_dist, outlet_x_dist):
         hyperparameters['max_cell_size_in_outlet'], \
         hyperparameters['max_cell_size_in_inlet_x_outlet'])
 
-parallelRefine = 2
-normalRefine = 1
+globalRefine = 2.5
+parallelRefine = 1*globalRefine
+normalRefine = 1*globalRefine
 
 
 def generate_blockMesh_full(pointList, aoa, inlet_x_dist, \
@@ -103,7 +104,7 @@ def generate_blockMesh_full(pointList, aoa, inlet_x_dist, \
     result += "\n"
     result += "blocks\n"
     result += "(\n"
-    result += " hex (0 1 2 3 4 5 6 7) (%g %g 1)\n" % (parallelRefine*(num_mesh_in_leading+num_mesh_in_trailing), normalRefine*(num_mesh_on_boundary_layer+num_mesh_out_of_boundary_layer))
+    result += " hex (0 1 2 3 4 5 6 7) (%g %g 1)\n" % (round(parallelRefine*(num_mesh_in_leading+num_mesh_in_trailing)), round(normalRefine*(num_mesh_on_boundary_layer+num_mesh_out_of_boundary_layer)))
     result += " edgeGrading\n"
     result += " (\n"
     result += "     (\n"
@@ -135,7 +136,7 @@ def generate_blockMesh_full(pointList, aoa, inlet_x_dist, \
     # z direction expansion ratio
     result += "     1  1  1  1"
     result += " )\n"
-    result += " hex ( 1 8 9 2 5 10 11 6 ) ( %g %g 1 )\n" % (parallelRefine*num_mesh_at_tail, normalRefine*(num_mesh_on_boundary_layer+num_mesh_out_of_boundary_layer))
+    result += " hex ( 1 8 9 2 5 10 11 6 ) ( %g %g 1 )\n" % (round(parallelRefine*num_mesh_at_tail), round(normalRefine*(num_mesh_on_boundary_layer+num_mesh_out_of_boundary_layer)))
     result += " edgeGrading\n"
     result += " (\n"
     # x direction expansion ratio
@@ -153,7 +154,7 @@ def generate_blockMesh_full(pointList, aoa, inlet_x_dist, \
     # z direction expansion ratio
     result += " 1 1 1 1 \n"
     result += " )\n"
-    result += " hex (3 12 16 0 7 13 17 4) (%g %g 1)\n" % (parallelRefine*(num_mesh_in_leading+num_mesh_in_trailing), normalRefine*(num_mesh_on_boundary_layer+num_mesh_out_of_boundary_layer))
+    result += " hex (3 12 16 0 7 13 17 4) (%g %g 1)\n" % (round(parallelRefine*(num_mesh_in_leading+num_mesh_in_trailing)), round(normalRefine*(num_mesh_on_boundary_layer+num_mesh_out_of_boundary_layer)))
     result += " edgeGrading\n"
     result += " (\n"
     # x direction expansion ratio
@@ -188,7 +189,7 @@ def generate_blockMesh_full(pointList, aoa, inlet_x_dist, \
     result += "  1 1 1 1 \n"
     result += " )\n"
     result += "\n"
-    result += " hex ( 12 14 8 16 13 15 10 17 ) ( %g %g 1 ) \n" % (parallelRefine*num_mesh_at_tail, normalRefine*(num_mesh_on_boundary_layer + num_mesh_out_of_boundary_layer))
+    result += " hex ( 12 14 8 16 13 15 10 17 ) ( %g %g 1 ) \n" % (round(parallelRefine*num_mesh_at_tail), round(normalRefine*(num_mesh_on_boundary_layer + num_mesh_out_of_boundary_layer)))
     result += " edgeGrading\n"
     result += " (\n"
     # x direction expansion ratio

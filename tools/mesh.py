@@ -30,25 +30,22 @@ class Mesh:
     def get_face_normals_unit(self, face): # must know direction!
         face_vertices = self.get_face_vertices(face)
         anchor = face_vertices[0]
-        #for vertex in face_vertices:
-        #    if vertex[0] < anchor[0]:
-        #        anchor = vertex
-        #    if vertex[2] < anchor[2]:
-        #        anchor = vertex
         cis = face_vertices[1]
         trans = face_vertices[2]
-        #for vertex in face_vertices:
-        #    if vertex[0:2] != anchor[0:2] and vertex[2] == anchor[2]:
-        #        cis = vertex
-        #    if vertex[0:2] == anchor[0:2] and vertex[2] != anchor[2]:
-        #        trans = vertex
+        mult = 1
+        if cis[0]==anchor[0] and cis[1]==anchor[1]:
+            anchor = face_vertices[2]
+            cis = face_vertices[0]
+            trans = face_vertices[1]
+            mult = -1
         a = math.sqrt((cis[0]-anchor[0])**2 + (cis[1]-anchor[1])**2)
         b = abs(trans[2]-anchor[2])
         print("    Anchor vertex: " + str(anchor))
         print("    Cis vertex: " + str(cis))
-        cis_direction = [(cis[0]-anchor[0])/a, (cis[1]-anchor[1])/a, 0]
-        normal_direction = [-cis_direction[1], cis_direction[0], 0]
-        trans_direction = [0, 0, 1]
+        print("    Trans vertex: " + str(trans))
+        cis_direction = [mult*(cis[0]-anchor[0])/a, mult*(cis[1]-anchor[1])/a, 0]
+        normal_direction = [mult*(-cis_direction[1]), mult*cis_direction[0], 0]
+        trans_direction = [0, 0, mult]
         return (cis_direction, normal_direction, trans_direction)
         
 
@@ -75,6 +72,9 @@ class Mesh:
         for vertex in face_vertices:
             result.append(self.points[vertex])
         return result
+
+    def get_boundary_faces(self):
+        return self.boundary_faces
 
     def get_boundary_start_face(self):
         return self.boundary_start_face

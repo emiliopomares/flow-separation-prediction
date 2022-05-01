@@ -1,0 +1,41 @@
+from re import X
+import mysql.connector
+import os
+
+config = {
+  'user': os.environ.get('DB_USER', 'flow'),
+  'password': os.environ.get('DB_PASSWD', 'default_password'),
+  'host': os.environ.get('DB_HOST', '127.0.0.1'),
+  'database': 'simulation_results',
+  'raise_on_warnings': True
+}
+
+def push_result(aoa, re, mc, mcp, thick, x):
+  cnx = mysql.connector.connect(**config)
+  cursor = cnx.cursor()
+  add_datapoint = ("INSERT INTO Datapoints "
+              "VALUES (%(id)s, %(aoa)s, %(re)s, %(mc)s, %(mcp)s, %(thick)s, %(sep_x)s)")
+  datapoint = {
+  'id': 0,
+  'aoa': aoa,
+  're': re,
+  'mc': mc,
+  'mcp': mcp,
+  'thick': thick,
+  'sep_x': x
+  }
+  cursor.execute(add_datapoint, datapoint)
+  cnx.commit()
+  cursor.close()
+  cnx.close()
+  return
+
+if __name__ == '__main__':
+    print(str(config))
+    aoa     = 2.23
+    re      = 2000.0
+    mc 		= 12
+    mcp 	= 14
+    thick 	= 16
+    sep_x   = 0.73
+    push_result(aoa, re, mc, mcp, thick, sep_x)

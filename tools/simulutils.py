@@ -3,6 +3,9 @@ from os import listdir
 from os.path import isdir, join
 import math
 
+def dot_product(a, b):
+    return a[0]*b[0]+a[1]*b[1]+a[2]*b[2]
+
 def find_latest_time_dir():
     output_path = config['project_path']
     onlydirs = [f for f in listdir(output_path) if isdir(output_path + '/' + f) and f.isnumeric()]

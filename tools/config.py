@@ -1,5 +1,5 @@
 import os
 
 config = {
-    'project_path': os.getcwd() + '/../openfoam/run/Airfold2D_full/'
+    'project_path': os.getcwd() + '/../openfoam/run/Airfoil2D_full/'
 }

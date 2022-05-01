@@ -66,6 +66,7 @@ def make_datapoint_with_params(aoa, re, _mc, _mcp, _thick, newData=True, generat
         print("Postprocessing...")
         os.chdir(config['project_path'])
         subprocess.run(["simpleFoam", "-postProcess", "-func", "wallShearStress"])
+        subprocess.run(["simpleFoam", "-postProcess", "-func", "yPlus"])
 
     #read geo
     (nFaces, wallStartFace) = read_geo.read_wall_start_face()

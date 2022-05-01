@@ -20,17 +20,19 @@ nu = 1e-05 # air cinematic viscosity m²/s
 
 
 def make_aoa():
-    return np.random.normal(0, max_aoa**0.5, size=1)[0]
+    return 7 #np.random.normal(12, 2**0.5, size=1)[0] # max_aoa**0.5, size=1)[0]
 
 def make_Re():
-    return np.random.uniform(low=min_Re, high=max_Re, size=1)[0]
+    return 2000 #np.random.uniform(low=min_Re, high=max_Re, size=1)[0]
 
 def make_naca4():
     return [
-        np.random.uniform(low=naca4_max_camber_min, high=naca4_max_camber_max, size=1)[0],
-        np.random.uniform(low=naca4_max_camber_position_min, high=naca4_max_camber_position_max, size=1)[0],
-        np.random.uniform(low=naca4_thickness_min, high=naca4_thickness_max, size=1)[0],
+        4, #np.random.uniform(low=naca4_max_camber_min, high=naca4_max_camber_max, size=1)[0],
+        40, #np.random.uniform(low=naca4_max_camber_position_min, high=naca4_max_camber_position_max, size=1)[0],
+        18 #np.random.uniform(low=naca4_thickness_min, high=naca4_thickness_max, size=1)[0],
     ]
 
 def Re_to_U(Re, _L=L, _nu=nu):
+    u = Re*_nu/_L
+    print("Freestream vel (m/s): " + str(u))
     return Re*_nu/_L
