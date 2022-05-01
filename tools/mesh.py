@@ -24,11 +24,24 @@ class Mesh:
     def get_number_of_faces(self):
         return len(self.faces)
 
-    def get_face(self, face):
-        return self.faces[face]
+    def get_face_by_index(self, face_index):
+        return self.faces[face_index]
 
-    def get_face_normals_unit(self, face): # must know direction!
-        face_vertices = self.get_face_vertices(face)
+    def get_face_parallel_vector_by_index(self, face_index): # must know direction!
+        print("get face parallel vector called with face: " + str(face_index))
+        face_vertices = self.get_face_vertices_by_index(face_index)
+        anchor = face_vertices[0]
+        cis = face_vertices[1]
+        mult = 1
+        if cis[0]==anchor[0] and cis[1]==anchor[1]:
+            anchor = face_vertices[2]
+            cis = face_vertices[0]
+            mult = -1
+        cis_vector = [mult*(cis[0]-anchor[0]), mult*(cis[1]-anchor[1]), 0]
+        return cis_vector
+
+    def get_face_normals_unit_by_index(self, face_index): # must know direction!
+        face_vertices = self.get_face_vertices_by_index(face_index)
         anchor = face_vertices[0]
         cis = face_vertices[1]
         trans = face_vertices[2]
@@ -50,7 +63,7 @@ class Mesh:
         
 
     def get_face_area(self, face):
-        face_vertices = self.get_face_vertices(face)
+        face_vertices = self.get_face_vertices_by_index(face)
         anchor = face_vertices[0]
         cis = None
         trans = None
@@ -63,12 +76,20 @@ class Mesh:
         b = abs(trans[2]-anchor[2])
         return a*b
 
-    def get_face_centroid(self, face):
-        return [0, 0, 0]
+    def get_face_centroid_by_index(self, face_index):
+        vertices = self.get_face_vertices_by_index(face_index)
+        accX = 0
+        accY = 0
+        accZ = 0
+        for vertex in vertices:
+            accX += vertex[0]
+            accY += vertex[1]
+            accZ += vertex[2]
+        return [accX/len(vertices), accY/len(vertices), accZ/len(vertices)]
 
-    def get_face_vertices(self, face):
+    def get_face_vertices_by_index(self, face_index):
         result = []
-        face_vertices = self.get_face(face)
+        face_vertices = self.get_face_by_index(face_index)
         for vertex in face_vertices:
             result.append(self.points[vertex])
         return result

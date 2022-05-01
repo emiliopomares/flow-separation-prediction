@@ -14,7 +14,7 @@ import generate_parameters
 # This is the script to generate the training dataset
 
 def make_datapoint():
-    make_datapoint_with_params(0, 0, 0, 0, 0, True, True)
+    return make_datapoint_with_params(0, 0, 0, 0, 0, False, True)
 
 def make_datapoint_with_params(aoa, re, _mc, _mcp, _thick, newData=True, generate=True):
 
@@ -76,21 +76,19 @@ def make_datapoint_with_params(aoa, re, _mc, _mcp, _thick, newData=True, generat
 
     print("Boundary start face: " + str(g.get_boundary_start_face()))
     sf = g.get_boundary_start_face()
-    print("A boundary face: " + str(g.get_face_vertices(sf)))
+    print("A boundary face: " + str(g.get_face_vertices_by_index(sf)))
     print("Area of the face: " + str(g.get_face_area(sf)))
-    print("Axis at that face: " + str(g.get_face_normals_unit(sf)))
+    print("Axis at that face: " + str(g.get_face_normals_unit_by_index(sf)))
 
     s = flow_utils.find_separation_point(g)
 
     print(s)
 
-    output = flow_utils.make_result_from_separation_points(angle, s)
-
-    print("output:  " + str(output['upper_sep_point']) + ", " + str(output['lower_sep_point']))
-
     print("Done")
 
-    return {'inputs': [ angle, Re, mc, mcp, th ], 'outputs': [output['upper_sep_point'], output['lower_sep_point']]}
+    datapoint = {'inputs': [ angle, Re, mc, mcp, th ], 'outputs': [s]}
+    print("  The datapoint: " + str(datapoint))
+    return datapoint
 
 if __name__ == '__main__':
     aoa     = float(sys.argv[1])

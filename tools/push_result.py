@@ -11,20 +11,12 @@ config = {
 }
 
 def push_result(aoa, re, mc, mcp, thick, x):
+  print("push result called, config: " + str(config))
   cnx = mysql.connector.connect(**config)
   cursor = cnx.cursor()
-  add_datapoint = ("INSERT INTO Datapoints "
-              "VALUES (%(id)s, %(aoa)s, %(re)s, %(mc)s, %(mcp)s, %(thick)s, %(sep_x)s)")
-  datapoint = {
-  'id': 0,
-  'aoa': aoa,
-  're': re,
-  'mc': mc,
-  'mcp': mcp,
-  'thick': thick,
-  'sep_x': x
-  }
-  cursor.execute(add_datapoint, datapoint)
+  add_datapoint = "INSERT INTO Datapoints VALUES (0, " + str(aoa) + ", " + str(re) + ", " + str(mc) + ", " + str(mcp) + ", " + str(thick) + ", " + str(x) + ")"
+  print("Executing query: " + add_datapoint)
+  cursor.execute(add_datapoint)
   cnx.commit()
   cursor.close()
   cnx.close()

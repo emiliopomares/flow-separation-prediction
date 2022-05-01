@@ -3,7 +3,7 @@ from flow_utils import *
 from mesh import *
 import read_geo
 
-def detect_separation_points(mesh, wss): # this is not acceptable
+def detect_separation_point(mesh, wss):
     print("detect separation points")
     wall_face_index = mesh.get_boundary_start_face()
     print("wall face index: " + str(wall_face_index))
@@ -13,27 +13,43 @@ def detect_separation_points(mesh, wss): # this is not acceptable
     sep_p_old = []
     upper_sep_p = []
     lower_sep_p = []
+    previous_stress = 0
+    previous_wall_centroid = None
     for i in range(0, len(wss)//2):
         print("i : " + str(i))
         print("wall face + i : " + str(wall_face_index+i))
-        face_normals = mesh.get_face_normals_unit(wall_face_index+i)
+        face_normals = mesh.get_face_normals_unit_by_index(wall_face_index+i)
+        wall_centroid = mesh.get_face_centroid_by_index(wall_face_index+i)
         print("wall face normals parallel: " + str(face_normals[0]))
         print("wall shear stress: " + str(wss[i]))
         stress_in_parallel_direction = simulutils.dot_product(wss[i], face_normals[0])
         n = stress_in_parallel_direction #simulutils.norm(wss[i]) * (-simulutils.sign_of(wss[i][0]) + 1)/2
         print(" Sep point test face  " + str(i) + " -> " + str(n))
-        if n < epsilon:
-            #sep_faces.append(i)
-            #sep_p_old.append(wall_face_to_p_old(i, nFaces))
-            #sep_p.append(wall_face_to_p(mesh, i))
-            if(i > len(wss)//2):
-                lower_sep_p.append(wall_face_to_p(mesh, i))
-            else:
-                upper_sep_p.append(wall_face_to_p(mesh, i))
-    return {
-        'upper_sep_points': upper_sep_p,
-        'lower_sep_points': lower_sep_p
-    }
+        sign_test = previous_stress * n
+        if(sign_test < 0):
+            print("     Separation point found at wall face " + str(i))
+            print("     Previous wall face centroid: " + str(previous_wall_centroid) + ", stress value: " + str(previous_stress))
+            print("     Wall face centroid: " + str(wall_centroid) + ", stress value: " + str(n))
+            total_upper_surface_length = calculate_upper_profile_length(mesh)
+            prev_point_length = calculate_partial_profile_length(mesh, i-1)
+            past_point_length = calculate_partial_profile_length(mesh, i)
+            print("             Total surface length: " + str(total_upper_surface_length) + ",    prev point length: " + str(prev_point_length/ total_upper_surface_length) + ",  past point length length: " + str(past_point_length/ total_upper_surface_length))
+            print("                                             ,    prev point stress: " + str(previous_stress) + ",  past point length length: " + str(n))
+            prev_point_x = prev_point_length / total_upper_surface_length
+            past_point_x = past_point_length / total_upper_surface_length
+            return find_zero_crossing_linear(prev_point_x, previous_stress, past_point_x, n)
+        previous_wall_centroid = wall_centroid
+        previous_stress = n
+    return 1.0
+
+def find_zero_crossing_linear(x_1, y_1, x_2, y_2):
+    total_y_advance = -(y_2 - y_1)
+    y_to_zero = y_1
+    fraction = y_to_zero / total_y_advance
+    print("    total_y_advance: " + str(total_y_advance) + ", y_to_zero: " + str(y_1) + ", fraction: " + str(fraction))
+    result = x_1 + (x_2-x_1)*fraction
+    print("   x_1: "+str(x_1)+", x_2: "+str(x_2)+", x result: " + str(result))
+    return result
 
 def calculate_pressure_lift_drag(mesh, angle_of_attack):
     latest_time = simulutils.find_latest_time_dir()
@@ -51,34 +67,9 @@ def calculate_wallShearStress_lift_drag(mesh, angle_of_attack):
     return [0,0,0]
 
 def find_separation_point(mesh):
-    print("find separation points")
     latest_time = simulutils.find_latest_time_dir()
     wallStresses = read_geo.read_vector_field(latest_time, 'wallShearStress')
-    return detect_separation_points(mesh, wallStresses)
-
-def calculate_partial_profile_length(mesh, wall_face_index):
-    total_length = 0
-    count = 0
-    n_wall_faces = len(mesh.boundary_faces)
-    is_upper = wall_face_index <= n_wall_faces//2
-    start_face = 0
-    if is_upper == False:
-        start_face = n_wall_faces // 2
-    for i in range(start_face, wall_face_index):
-        count+=1
-        v1 = None
-        v2 = None
-        for index in mesh.boundary_faces[i]:
-            point = mesh.points[index]
-            if point[2] > 0.0:
-                continue
-            if v1 == None:
-                v1 = point
-            else:
-                v2 = point
-            if v1 != None and v2 != None:
-                total_length += simulutils.norm([v2[0]-v1[0], v2[1]-v1[1], 0])
-    return total_length
+    return detect_separation_point(mesh, wallStresses)
 
 def get_min_x_of_face(mesh, face):
     x = []
@@ -103,33 +94,35 @@ def calculate_profile_projection(mesh, wallFaceIndex):
         measures += 1  
     return accum_x / measures
 
-def calculate_profile_length(mesh, comp_func):
+def calculate_upper_profile_length(mesh):
     total_length = 0
     count = 0
-    n_wall_faces = len(mesh.boundary_faces)
-    for face in mesh.boundary_faces:
-        count+=1
-        if comp_func(count-1, n_wall_faces)==False:
-            continue
-        v1 = None
-        v2 = None
-        for index in face:
-            point = mesh.points[index]
-            if point[2] > 0.0:
-                continue
-            if v1 == None:
-                v1 = point
-            else:
-                v2 = point
-            if v1 != None and v2 != None:
-                total_length += simulutils.norm([v2[0]-v1[0], v2[1]-v1[1], 0])
+    wall_face_index = mesh.get_boundary_start_face()
+    n_upper_faces = len(mesh.boundary_faces)//2
+    for i in range(0, n_upper_faces):
+        face_parallel_vector = mesh.get_face_parallel_vector_by_index(wall_face_index+i)
+        vector_length = simulutils.norm(face_parallel_vector)
+        total_length += vector_length
     return total_length
 
-def calculate_upper_profile_length(mesh):
-    return calculate_profile_length(mesh, lambda x, y: x < y//2)
+def calculate_partial_profile_length(mesh, stop_index):
+    total_length = 0
+    number_of_boundary_faces = len(mesh.get_boundary_faces())
+    wall_face_index = mesh.get_boundary_start_face()
+    n_upper_faces = len(mesh.boundary_faces)//2
+    for i in range(0, number_of_boundary_faces):
+        face_parallel_vector = mesh.get_face_parallel_vector_by_index(wall_face_index+i)
+        vector_length = simulutils.norm(face_parallel_vector)
+        total_length += vector_length
+        if i == stop_index:
+            break
+    return total_length
 
-def calculate_lower_profile_length(mesh):
-    return calculate_profile_length(mesh, lambda x, y: x >= y//2)
+#def calculate_upper_profile_length(mesh):
+#    return calculate_upper_profile_length(mesh, lambda x, y: x < y//2)
+
+#def calculate_lower_profile_length(mesh):
+#    return calculate_upper_profile_length(mesh, lambda x, y: x >= y//2)
 
 def wall_face_to_p(mesh, wallFaceIndex):
     #return wallFaceIndex
