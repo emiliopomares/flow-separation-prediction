@@ -3,7 +3,7 @@ WORKDIR /app
 COPY . .
 RUN apt-get update
 RUN apt-get install -y python
-RUN apt-get install -y pip
+RUN apt-get install -y python-pip
 RUN pip3 install matplotlib
 RUN apt-get install -y wget
 RUN apt-get install -y gnupg

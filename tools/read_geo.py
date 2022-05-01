@@ -3,7 +3,7 @@ import os
 from mesh import Mesh
 import simulutils
 import flow_utils
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 
 def read_wall_start_face():
     boundaryFile = config['project_path'] + 'constant/polyMesh/boundary'
