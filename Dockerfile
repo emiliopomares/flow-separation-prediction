@@ -1,10 +1,11 @@
-FROM ubuntu:latest
+FROM ubuntu:18.04
 WORKDIR /app
 COPY . .
+RUN echo $(ls -lha) 
 RUN apt-get update
 RUN apt-get install -y python
-RUN apt-get install -y python-pip
-RUN pip3 install matplotlib
+RUN apt-get install -y python3-pip
+RUN pip3 install numpy
 RUN apt-get install -y wget
 RUN apt-get install -y gnupg
 RUN apt-get install -y software-properties-common
@@ -14,6 +15,6 @@ RUN sh -c "wget -O - http://dl.openfoam.org/gpg.key | apt-key add -"
 RUN add-apt-repository -y http://dl.openfoam.org/ubuntu
 RUN apt-get update
 RUN apt-get -y install openfoam5
-RUN source /opt/openfoam5/etc/bashrc
-RUN git clone https://github.com/emiliopomares/flow-separation-prediction
-CMD ["python3", "./flow-separation-prediction/tools/make_dataset.py"]
+WORKDIR /app/tools
+RUN echo $(ls -lha)
+CMD ["source", "/opt/openfoam5/etc/bashrc", "&&", "python3", "make_dataset.py"]
