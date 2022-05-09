@@ -26,7 +26,7 @@ def detect_separation_point(mesh, wss):
         n = stress_in_parallel_direction #simulutils.norm(wss[i]) * (-simulutils.sign_of(wss[i][0]) + 1)/2
         print(" Sep point test face  " + str(i) + " -> " + str(n))
         sign_test = previous_stress * n
-        if(sign_test < 0):
+        if(sign_test < 0 and n > 0):
             print("     Separation point found at wall face " + str(i))
             print("     Previous wall face centroid: " + str(previous_wall_centroid) + ", stress value: " + str(previous_stress))
             print("     Wall face centroid: " + str(wall_centroid) + ", stress value: " + str(n))

@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: flow-simulation
-        image: emiliopomaresporras/flowsep:1
+        image: emiliopomaresporras/flowsep:9
         env:
         - name: DB_HOST
           valueFrom:
@@ -30,7 +30,7 @@ spec:
               key: db_passwd
         resources:
           limits:
-            cpu: 900m
+            cpu: 2000m
           requests:
-            cpu: 800m
+            cpu: 1000m
 
