@@ -1,7 +1,7 @@
 import make_datapoint
 import push_result
 
-max_datapoints = 250
+max_datapoints = 10000
 
 def make_dataset():
     m = max_datapoints

@@ -5,7 +5,7 @@ metadata:
   labels:
     app: flow-simulation
 spec:
-  replicas: 1
+  replicas: 18
   selector:
     matchLabels:
       app: flow-simulation

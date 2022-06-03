@@ -31,11 +31,15 @@ def make_datapoint_with_params(aoa, re, _mc, _mcp, _thick, newData=True, generat
         # select parameters
 
         angle = generate_parameters.make_aoa()
+        
         if(not generate):
             angle = aoa
+        print("Selected aoa: " + str(angle))
         Re = generate_parameters.make_Re()
+        
         if(not generate):
             Re = re
+        print("Selected Re: " + str(Re))
         U = generate_parameters.Re_to_U(Re)
         mc, mcp, th = generate_parameters.make_naca4() 
         if(not generate):
