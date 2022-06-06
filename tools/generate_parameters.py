@@ -18,7 +18,7 @@ L = 1 # chord line 1 m
 nu = 1e-05 # air cinematic viscosity m²/s 
 
 def make_aoa():
-    return np.random.uniform(low=0, high=22, size=1)[0]
+    return np.random.uniform(low=0, high=30, size=1)[0]
     if np.random.uniform(low=0, high=1, size=1)[0] < 0.75:
         return abs(np.random.normal(7.2, 4**0.5, size=1)[0])
     else:
