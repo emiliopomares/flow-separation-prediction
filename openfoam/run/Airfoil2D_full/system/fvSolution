@@ -34,6 +34,18 @@ solvers
         relTol          0.1;
     }
 
+    UFinal
+    {
+   	$U;
+        relTol 0; 
+    }
+
+    pFinal
+    {
+	$p;
+	relTol 0;
+    }
+
     nuTilda
     {
         solver          smoothSolver;
@@ -43,6 +55,31 @@ solvers
         relTol          0.1;
     }
 }
+
+PIMPLE
+{
+	nNonOrthogonalCorrectors 0;
+	nCorrectors 1;
+	nOuterCorrectors 100;
+	pRefCell 0;
+	pRefValue 0;
+
+	residualControl
+        {
+       		p
+		{
+			tolerance 1e-5;
+			relTol 0;
+		}
+		U
+		{
+			tolerance 1e-7;
+			relTol 0;
+		} 
+	}
+
+}
+
 
 SIMPLE
 {
