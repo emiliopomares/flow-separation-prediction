@@ -11,4 +11,7 @@ def make_dataset():
         m -= 1
 
 if __name__ == '__main__':
+    print("Using db user " + push_result.config['user'])
+    print("Using db passwd " + push_result.config['password'])
+    print("Using db host " + push_result.config['host'])
     make_dataset()

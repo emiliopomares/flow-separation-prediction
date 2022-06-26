@@ -34,33 +34,32 @@ solvers
         relTol          0.1;
     }
 
-    UFinal
+    "(U|nuTilda)Final"
     {
    	$U;
-        relTol 0; 
+        tolerance 1e-08; 
     }
 
     pFinal
     {
 	$p;
-	relTol 0;
+	tolerance 1e-06;
     }
 
     nuTilda
     {
         solver          smoothSolver;
-        smoother        GaussSeidel;
+        smoother        symGaussSeidel; //GaussSeidel;
         nSweeps         2;
         tolerance       1e-08;
-        relTol          0.1;
     }
 }
 
 PIMPLE
 {
-	nNonOrthogonalCorrectors 0;
+	nNonOrthogonalCorrectors 10;
 	nCorrectors 1;
-	nOuterCorrectors 100;
+	nOuterCorrectors 3000;
 	pRefCell 0;
 	pRefValue 0;
 

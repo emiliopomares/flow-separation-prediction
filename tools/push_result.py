@@ -4,8 +4,8 @@ import os
 
 config = {
   'user': os.environ.get('DB_USER', 'flow'),
-  'password': os.environ.get('DB_PASSWD', 'default_password'),
-  'host': os.environ.get('DB_HOST', '127.0.0.1'),
+  'password': os.environ.get('DB_PASSWD', 'abcABC12345%'),
+  'host': os.environ.get('DB_HOST', '165.232.146.23'),
   'database': 'simulation_results',
   'raise_on_warnings': True
 }

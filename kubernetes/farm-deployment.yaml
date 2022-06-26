@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: flow-simulation
-        image: emiliopomaresporras/flowsep:9
+        image: emiliopomaresporras/flowsep:16
         env:
         - name: DB_HOST
           valueFrom:

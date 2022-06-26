@@ -2,10 +2,10 @@ import numpy as np
 
 # parameters ranges
 
-min_aoa = 16
-max_aoa = 16
-min_Re = 1000
-max_Re = 1000
+min_aoa = 0
+max_aoa = 20
+min_Re = 100
+max_Re = 2000
 
 naca4_max_camber_min = 4 #0
 naca4_max_camber_max = 4 #9.5

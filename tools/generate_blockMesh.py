@@ -9,7 +9,7 @@ hyperparameters = {
     'cell_size_in_middle':              0.035,
     'separating_point_position':        0.4,
     'boundary_layer_thickness':         0.1,
-    'first_layer_thickness':            0.0002, # 0.00001, # was 0.005 working value 0.00002
+    'first_layer_thickness':            0.0002, # should be 0.0002
     'expansion_ratio':                  1.2,
     'max_cell_size_in_inlet':           1,
     'max_cell_size_in_outlet':          1,
@@ -31,7 +31,7 @@ def generate_blockMesh(pointList, aoa, inlet_x_dist, outlet_x_dist):
         hyperparameters['max_cell_size_in_outlet'], \
         hyperparameters['max_cell_size_in_inlet_x_outlet'])
 
-globalRefine = 2.5
+globalRefine = 2.5 # should be 2.5
 parallelRefine = 1*globalRefine
 normalRefine = 1*globalRefine
 
