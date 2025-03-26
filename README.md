@@ -15,14 +15,12 @@ A convergence study was carried out to determine how fine the simulation domain 
 <img src="media/grid-size-convergence.jpg" alt="Grid size convergence" style="width: 800px;">
 
 The result was a trained model that, within the tight restrictions of the project, produced a result accurate within 2%.
-<img src="media/learnt_function.jpg" alt="Learnt Function" style="width: 800px;">
+
 
 A plot of the learnt function for different values of Re and angle of attack:
+<img src="media/learnt-function.jpg" alt="Learnt Function" style="width: 800px;">
+
+It was also interesting to visualize the separation/no separation boundary in parameter space:
 <img src="media/separation-boundary.jpg" alt="Separation boundary" style="width: 800px;">
 
-and the separation/no separation boundary:
-
-
-
-
-
+This project was awarded top marks by the Commitee.
